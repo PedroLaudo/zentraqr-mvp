@@ -134,7 +134,7 @@ const MenuPage = () => {
       </div>
 
       {/* Cart Button */}
-      {cart.length > 0 && !document.querySelector('[data-modal-open="true"]') && (
+      {cart.length > 0 && (
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
@@ -240,7 +240,7 @@ const ProductCard = ({ product, onAddToCart }) => {
       {showDetails && (
         <div 
           data-modal-open="true"
-          className="fixed inset-0 bg-black/50 z-50 flex items-end" 
+          className="fixed inset-0 bg-black/50 z-[60] flex items-end" 
           onClick={() => setShowDetails(false)}
         >
           <motion.div
