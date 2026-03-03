@@ -18,15 +18,19 @@ const AdminLoginPage = () => {
     setError('');
     setLoading(true);
 
-    const result = await login(email, password);
+    try {
+      const result = await login(email, password);
 
-    if (result.success) {
-      navigate('/admin/dashboard');
-    } else {
-      setError(result.error);
+      if (result.success) {
+        navigate('/admin/dashboard');
+      } else {
+        setError(result.error || 'Erro ao fazer login');
+      }
+    } catch (err) {
+      setError('Erro ao fazer login. Verifique os seus dados.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

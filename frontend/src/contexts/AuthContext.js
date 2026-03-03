@@ -50,7 +50,28 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.detail || 'Erro ao fazer login' };
+      let errorMessage = 'Erro ao fazer login';
+      
+      if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        
+        // Handle array of validation errors from FastAPI
+        if (Array.isArray(detail)) {
+          errorMessage = detail.map(err => err.msg || 'Erro de validação').join(', ');
+        } 
+        // Handle string error message
+        else if (typeof detail === 'string') {
+          errorMessage = detail;
+        }
+        // Handle object error
+        else {
+          errorMessage = 'Credenciais inválidas';
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -70,7 +91,28 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.detail || 'Erro ao registar' };
+      let errorMessage = 'Erro ao registar';
+      
+      if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        
+        // Handle array of validation errors from FastAPI
+        if (Array.isArray(detail)) {
+          errorMessage = detail.map(err => err.msg || 'Erro de validação').join(', ');
+        } 
+        // Handle string error message
+        else if (typeof detail === 'string') {
+          errorMessage = detail;
+        }
+        // Handle object error
+        else {
+          errorMessage = 'Erro ao registar utilizador';
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      return { success: false, error: errorMessage };
     }
   };
 
