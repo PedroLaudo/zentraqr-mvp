@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -162,27 +162,21 @@ const AdminDashboard = () => {
   return (
     <div className="flex min-h-screen bg-[#F3F4F6]">
       {/* Mobile Overlay */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          />
-        )}
-      </AnimatePresence>
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+        />
+      )}
 
       {/* Sidebar */}
-      <motion.div
-        initial={false}
-        animate={{
-          x: sidebarOpen ? 0 : '-100%',
-        }}
-        transition={{ type: 'tween', duration: 0.3 }}
-        className="w-64 bg-white border-r border-gray-200 fixed h-full z-50 lg:translate-x-0 lg:static"
-      >
+      <div className={`
+        w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto
+        fixed lg:static
+        z-50
+        transition-transform duration-300 lg:translate-x-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
@@ -316,10 +310,10 @@ const AdminDashboard = () => {
             <span className="font-medium">Sair</span>
           </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Main Content */}
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1 w-full lg:ml-0">
         {/* Mobile Header with Burger Menu */}
         <div className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <button
