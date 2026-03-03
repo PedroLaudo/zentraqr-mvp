@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { ChefHat, ShoppingCart, ArrowLeft, Plus, Minus } from 'lucide-react';
+import { RestaurantProvider, useRestaurant } from '../contexts/RestaurantContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -13,20 +14,25 @@ const MenuPage = () => {
   const restaurantId = searchParams.get('restaurant_id');
   const tableId = searchParams.get('table_id');
 
-  const [restaurant, setRestaurant] = useState(null);
+  return (
+    <RestaurantProvider restaurantId={restaurantId}>
+      <MenuPageContent 
+        restaurantId={restaurantId}
+        tableId={tableId}
+        navigate={navigate}
+        searchParams={searchParams}
+      />
+    </RestaurantProvider>
+  );
+};
+
+const MenuPageContent = ({ restaurantId, tableId, navigate, searchParams }) => {
+  const { restaurant, primaryColor, secondaryColor, logoUrl, restaurantName } = useRestaurant();
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Apply custom colors
-  useEffect(() => {
-    if (restaurant?.primary_color && restaurant?.secondary_color) {
-      document.documentElement.style.setProperty('--primary-color', restaurant.primary_color);
-      document.documentElement.style.setProperty('--secondary-color', restaurant.secondary_color);
-    }
-  }, [restaurant]);
 
   useEffect(() => {
     if (!restaurantId || !tableId) {
@@ -38,13 +44,11 @@ const MenuPage = () => {
 
   const loadData = async () => {
     try {
-      const [restRes, catRes, prodRes] = await Promise.all([
-        axios.get(`${API}/restaurants/${restaurantId}`),
+      const [catRes, prodRes] = await Promise.all([
         axios.get(`${API}/categories/restaurant/${restaurantId}`),
         axios.get(`${API}/products/restaurant/${restaurantId}`)
       ]);
 
-      setRestaurant(restRes.data);
       setCategories(catRes.data);
       setProducts(prodRes.data);
 
@@ -97,22 +101,22 @@ const MenuPage = () => {
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
-            {restaurant?.logo_url ? (
+            {logoUrl ? (
               <img 
-                src={restaurant.logo_url} 
-                alt={restaurant.name}
+                src={logoUrl} 
+                alt={restaurantName}
                 className="w-10 h-10 rounded-full object-cover"
               />
             ) : (
               <div 
                 className="w-10 h-10 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: restaurant?.primary_color || '#FF5500' }}
+                style={{ backgroundColor: primaryColor }}
               >
                 <ChefHat className="w-5 h-5 text-white" />
               </div>
             )}
             <div>
-              <h1 className="text-xl font-bold text-[#18181B]">{restaurant?.name}</h1>
+              <h1 className="text-xl font-bold text-[#18181B]">{restaurantName}</h1>
               <p className="text-sm text-[#71717A]">Mesa {searchParams.get('table_id')?.slice(-4)}</p>
             </div>
           </div>
@@ -129,13 +133,9 @@ const MenuPage = () => {
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-6 py-2 rounded-full font-medium whitespace-nowrap transition-all duration-300 ${
                 selectedCategory === cat.id
-                  ? 'text-white shadow-lg'
+                  ? 'category-active'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
-              style={selectedCategory === cat.id ? {
-                backgroundColor: restaurant?.primary_color || '#FF5500',
-                boxShadow: `0 4px 14px 0 ${restaurant?.primary_color || '#FF5500'}33`
-              } : {}}
             >
               {cat.name}
             </button>
@@ -165,13 +165,13 @@ const MenuPage = () => {
         >
           <button
             data-testid="view-cart-button"
-            onClick={() => navigate(`/cart?restaurant_id=${restaurantId}&table_id=${tableId}`, { state: { cart, restaurant } })}
-            className="w-full bg-[#FF5500] hover:bg-[#CC4400] text-white rounded-full py-4 px-6 font-bold shadow-[0_8px_30px_rgba(0,0,0,0.12)] flex items-center justify-between transition-all active:scale-95"
+            onClick={() => navigate(`/cart?restaurant_id=${restaurantId}&table_id=${tableId}`, { state: { cart, restaurant: { name: restaurantName, logo_url: logoUrl, primary_color: primaryColor } } })}
+            className="w-full btn-primary py-4 px-6 flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
               <ShoppingCart className="w-5 h-5" />
               <span>Ver Carrinho</span>
-              <span className="bg-white text-[#FF5500] rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+              <span className="bg-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold" style={{ color: primaryColor }}>
                 {cart.length}
               </span>
             </div>
@@ -243,10 +243,10 @@ const ProductCard = ({ product, onAddToCart }) => {
             <h3 className="font-bold text-lg text-[#18181B]">{product.name}</h3>
             <p className="text-sm text-[#71717A] line-clamp-2 mt-1">{product.description}</p>
             <div className="flex items-center justify-between mt-2">
-              <span className="text-lg font-bold text-[#FF5500]">€{product.price.toFixed(2)}</span>
+              <span className="text-lg font-bold text-primary-custom">€{product.price.toFixed(2)}</span>
               <button
                 data-testid={`add-${product.name.toLowerCase().replace(/\s+/g, '-')}`}
-                className="bg-[#FF5500] hover:bg-[#CC4400] text-white rounded-full px-4 py-1 text-sm font-bold transition-all active:scale-95"
+                className="btn-primary px-4 py-1 text-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowDetails(true);
@@ -360,7 +360,7 @@ const ProductCard = ({ product, onAddToCart }) => {
               <button
                 data-testid="confirm-add-to-cart"
                 onClick={handleAddToCart}
-                className="w-full bg-[#FF5500] hover:bg-[#CC4400] text-white rounded-full py-4 px-6 font-bold shadow-lg flex items-center justify-between transition-all active:scale-95"
+                className="w-full btn-primary py-4 px-6 shadow-lg flex items-center justify-between"
               >
                 <span>Adicionar ao Carrinho</span>
                 <span>€{getTotalPrice().toFixed(2)}</span>

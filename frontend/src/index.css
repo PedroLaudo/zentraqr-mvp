@@ -32,16 +32,31 @@ code {
         --text-primary: #18181B;
         --text-secondary: #71717A;
         --border: #E4E4E7;
+        
+        /* Dynamic colors - can be overridden by restaurant settings */
+        --primary-color: #FF5500;
+        --secondary-color: #10B981;
     }
 }
 
 @layer components {
     .btn-primary {
-        @apply bg-[#FF5500] hover:bg-[#CC4400] text-white rounded-full font-bold shadow-lg shadow-orange-500/20 transition-all duration-300 active:scale-95;
+        background-color: var(--primary-color);
+        color: white;
+        @apply rounded-full font-bold shadow-lg transition-all duration-300 active:scale-95;
+    }
+    
+    .btn-primary:hover {
+        filter: brightness(0.85);
     }
     
     .btn-secondary {
-        @apply bg-white border-2 border-gray-100 text-gray-900 hover:border-[#FF5500] hover:text-[#FF5500] rounded-full font-medium transition-all duration-300;
+        @apply bg-white border-2 border-gray-100 text-gray-900 rounded-full font-medium transition-all duration-300;
+    }
+    
+    .btn-secondary:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
     }
     
     .card {
@@ -50,5 +65,22 @@ code {
     
     .card-hover {
         @apply hover:shadow-md;
+    }
+    
+    .category-active {
+        background-color: var(--primary-color);
+        @apply text-white shadow-lg;
+    }
+    
+    .text-primary-custom {
+        color: var(--primary-color);
+    }
+    
+    .bg-primary-custom {
+        background-color: var(--primary-color);
+    }
+    
+    .bg-secondary-custom {
+        background-color: var(--secondary-color);
     }
 }
