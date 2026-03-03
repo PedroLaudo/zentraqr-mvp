@@ -77,6 +77,9 @@ class Restaurant(BaseModel):
     description: Optional[str] = None
     address: Optional[str] = None
     phone: Optional[str] = None
+    logo_url: Optional[str] = None
+    primary_color: str = "#FF5500"
+    secondary_color: str = "#10B981"
     active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -85,6 +88,9 @@ class RestaurantCreate(BaseModel):
     description: Optional[str] = None
     address: Optional[str] = None
     phone: Optional[str] = None
+    logo_url: Optional[str] = None
+    primary_color: str = "#FF5500"
+    secondary_color: str = "#10B981"
 
 class Table(BaseModel):
     model_config = ConfigDict(extra="ignore")

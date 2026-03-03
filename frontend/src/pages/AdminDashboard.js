@@ -13,12 +13,14 @@ import {
   CheckCircle,
   ChefHat,
   Package,
-  Bell
+  Bell,
+  Settings
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import MenuManagement from './MenuManagement';
+import RestaurantSettings from './RestaurantSettings';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -239,6 +241,19 @@ const AdminDashboard = () => {
               <QrCode className="w-5 h-5" />
               <span className="font-medium">Mesas</span>
             </button>
+
+            <button
+              data-testid="settings-tab"
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                activeTab === 'settings'
+                  ? 'bg-orange-50 text-[#FF5500]'
+                  : 'text-[#71717A] hover:bg-gray-50'
+              }`}
+            >
+              <Settings className="w-5 h-5" />
+              <span className="font-medium">Configurações</span>
+            </button>
           </nav>
         </div>
 
@@ -456,6 +471,8 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'settings' && <RestaurantSettings />}
       </div>
     </div>
   );

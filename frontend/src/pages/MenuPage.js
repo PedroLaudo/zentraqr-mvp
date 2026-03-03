@@ -20,6 +20,14 @@ const MenuPage = () => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Apply custom colors
+  useEffect(() => {
+    if (restaurant?.primary_color && restaurant?.secondary_color) {
+      document.documentElement.style.setProperty('--primary-color', restaurant.primary_color);
+      document.documentElement.style.setProperty('--secondary-color', restaurant.secondary_color);
+    }
+  }, [restaurant]);
+
   useEffect(() => {
     if (!restaurantId || !tableId) {
       navigate('/');
@@ -89,9 +97,20 @@ const MenuPage = () => {
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#FF5500] rounded-full flex items-center justify-center">
-              <ChefHat className="w-5 h-5 text-white" />
-            </div>
+            {restaurant?.logo_url ? (
+              <img 
+                src={restaurant.logo_url} 
+                alt={restaurant.name}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            ) : (
+              <div 
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: restaurant?.primary_color || '#FF5500' }}
+              >
+                <ChefHat className="w-5 h-5 text-white" />
+              </div>
+            )}
             <div>
               <h1 className="text-xl font-bold text-[#18181B]">{restaurant?.name}</h1>
               <p className="text-sm text-[#71717A]">Mesa {searchParams.get('table_id')?.slice(-4)}</p>
@@ -110,9 +129,13 @@ const MenuPage = () => {
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-6 py-2 rounded-full font-medium whitespace-nowrap transition-all duration-300 ${
                 selectedCategory === cat.id
-                  ? 'bg-[#FF5500] text-white shadow-lg shadow-orange-500/20'
+                  ? 'text-white shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
+              style={selectedCategory === cat.id ? {
+                backgroundColor: restaurant?.primary_color || '#FF5500',
+                boxShadow: `0 4px 14px 0 ${restaurant?.primary_color || '#FF5500'}33`
+              } : {}}
             >
               {cat.name}
             </button>
