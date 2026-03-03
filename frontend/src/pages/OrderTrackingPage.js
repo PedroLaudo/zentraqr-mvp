@@ -76,6 +76,20 @@ const OrderTrackingPage = () => {
     }
   };
 
+  const handlePayAtCounter = async () => {
+    try {
+      await axios.put(`${API}/orders/${orderId}/payment-method`, {
+        payment_method: 'counter'
+      });
+      
+      // Reload order to update UI
+      loadOrder();
+    } catch (error) {
+      console.error('Erro ao definir pagamento no balcão:', error);
+      alert('Erro ao definir pagamento no balcão');
+    }
+  };
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'received':
@@ -161,21 +175,58 @@ const OrderTrackingPage = () => {
         </motion.div>
 
         {/* Payment Status */}
-        {order.payment_status === 'pending' && (
+        {order.payment_status === 'pending' && !order.payment_method && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="card p-6 mb-6 bg-orange-50 border-orange-200"
           >
-            <h3 className="font-bold text-lg mb-3 text-orange-900">Pagamento Pendente</h3>
-            <p className="text-orange-700 mb-4">Complete o pagamento para confirmar o seu pedido</p>
-            <button
-              data-testid="pay-now-button"
-              onClick={handlePayment}
-              className="w-full btn-primary py-3"
-            >
-              Pagar Agora (€{order.total.toFixed(2)})
-            </button>
+            <h3 className="font-bold text-lg mb-3 text-orange-900">Escolha a Forma de Pagamento</h3>
+            <p className="text-orange-700 mb-4">Como pretende pagar o seu pedido?</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <button
+                data-testid="pay-online-button"
+                onClick={handlePayment}
+                className="bg-[#FF5500] hover:bg-[#CC4400] text-white py-3 px-4 rounded-lg font-bold transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                Pagar Online (€{order.total.toFixed(2)})
+              </button>
+              
+              <button
+                data-testid="pay-at-counter-button"
+                onClick={handlePayAtCounter}
+                className="bg-[#10B981] hover:bg-[#059669] text-white py-3 px-4 rounded-lg font-bold transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Pagar no Balcão
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {order.payment_method === 'counter' && order.payment_status === 'pending' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="card p-6 mb-6 bg-blue-50 border-blue-200"
+          >
+            <div className="flex items-start gap-3">
+              <svg className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 className="font-bold text-blue-900">Pagamento no Balcão</h3>
+                <p className="text-sm text-blue-700 mt-1">
+                  Pode pagar no balcão quando o seu pedido estiver pronto. Total: <strong>€{order.total.toFixed(2)}</strong>
+                </p>
+              </div>
+            </div>
           </motion.div>
         )}
 

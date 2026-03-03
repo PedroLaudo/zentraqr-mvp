@@ -175,6 +175,7 @@ class Order(BaseModel):
     total: float
     status: str = "received"  # received, preparing, ready, delivered, cancelled
     payment_status: str = "pending"  # pending, paid, failed
+    payment_method: Optional[str] = None  # online, counter
     payment_session_id: Optional[str] = None
     notes: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -573,6 +574,40 @@ async def update_order_status(order_id: str, status_update: OrderStatusUpdate, c
     }, room=f"restaurant_{order['restaurant_id']}")
     
     return {"message": "Estado atualizado", "status": status_update.status}
+
+@api_router.put("/orders/{order_id}/payment-method")
+async def update_order_payment_method(order_id: str, request: dict):
+    order = await db.orders.find_one({"id": order_id})
+    if not order:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    
+    payment_method = request.get("payment_method")
+    if payment_method not in ["online", "counter"]:
+        raise HTTPException(status_code=400, detail="Método de pagamento inválido")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    update_data = {
+        "payment_method": payment_method,
+        "updated_at": now
+    }
+    
+    # If paying at counter, mark as pending but with counter method
+    if payment_method == "counter":
+        update_data["payment_status"] = "pending"
+    
+    await db.orders.update_one(
+        {"id": order_id},
+        {"$set": update_data}
+    )
+    
+    # Emit real-time event
+    await sio.emit('order_payment_method_updated', {
+        "order_id": order_id,
+        "payment_method": payment_method,
+        "updated_at": now
+    }, room=f"restaurant_{order['restaurant_id']}")
+    
+    return {"message": "Método de pagamento atualizado", "payment_method": payment_method}
 
 # ============= PAYMENT ROUTES =============
 

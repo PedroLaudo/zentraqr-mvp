@@ -503,6 +503,9 @@ const AdminDashboard = () => {
                           {order.payment_status === 'paid' && (
                             <p className="text-xs text-[#10B981] mt-1">✓ Pago</p>
                           )}
+                          {order.payment_method === 'counter' && order.payment_status === 'pending' && (
+                            <p className="text-xs text-blue-600 mt-1">💰 Pagar no Balcão</p>
+                          )}
                         </div>
                       </div>
 
@@ -558,6 +561,11 @@ const OrderCard = ({ order, onStatusUpdate, getStatusColor, getStatusText }) => 
         <div>
           <p className="font-bold text-lg text-[#18181B]">Pedido #{order.id.slice(-8)}</p>
           <p className="text-sm text-[#71717A]">Mesa {order.table_number} • {new Date(order.created_at).toLocaleTimeString('pt-PT')}</p>
+          {order.payment_method === 'counter' && (
+            <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+              <span>💰</span> Pagar no Balcão
+            </p>
+          )}
         </div>
         <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
           {getStatusText(order.status)}
