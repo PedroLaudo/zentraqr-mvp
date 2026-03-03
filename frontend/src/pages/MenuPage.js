@@ -134,11 +134,11 @@ const MenuPage = () => {
       </div>
 
       {/* Cart Button */}
-      {cart.length > 0 && (
+      {cart.length > 0 && !document.querySelector('[data-modal-open="true"]') && (
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          className="fixed bottom-4 left-4 right-4 z-50"
+          className="fixed bottom-4 left-4 right-4 z-40"
         >
           <button
             data-testid="view-cart-button"
@@ -223,7 +223,11 @@ const ProductCard = ({ product, onAddToCart }) => {
 
       {/* Product Details Modal */}
       {showDetails && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => setShowDetails(false)}>
+        <div 
+          data-modal-open="true"
+          className="fixed inset-0 bg-black/50 z-50 flex items-end" 
+          onClick={() => setShowDetails(false)}
+        >
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
