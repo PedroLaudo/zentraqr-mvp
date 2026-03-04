@@ -4,11 +4,17 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from datetime import datetime, timezone
 import uuid
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-MONGO_URL = "mongodb://localhost:27017"
-DB_NAME = "test_database"
+MONGO_URL = os.environ['MONGO_URL']
+DB_NAME = os.environ['DB_NAME']
 
 # Design guidelines images
 IMAGES = {
