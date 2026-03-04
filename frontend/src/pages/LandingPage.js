@@ -8,7 +8,7 @@ const LandingPage = () => {
 
   // Test data - simulate QR code scan
   const handleTestMenu = () => {
-    navigate('/menu?restaurant_id=4e5be1a0-9a05-4909-8d30-8a4ce714d599&table_id=d07ca7e4-f1f6-4ab8-abcb-a22243ea63c1');
+    navigate('/menu?restaurant_id=42075462-798e-4f1c-aa88-163306477ecf&table_id=0af1b474-3201-4a67-a85e-78c59a2994b8');
   };
 
   return (
