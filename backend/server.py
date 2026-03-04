@@ -399,7 +399,7 @@ async def get_table_qrcode(table_id: str):
         raise HTTPException(status_code=404, detail="Mesa não encontrada")
     
     # Generate QR code URL
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://menuqr-12.preview.emergentagent.com')
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://table-qr-1.preview.emergentagent.com')
     qr_data = f"{frontend_url}/menu?restaurant_id={table['restaurant_id']}&table_id={table['id']}"
     
     # Generate QR code image
@@ -680,7 +680,7 @@ async def get_checkout_status(session_id: str):
         return {"status": "complete", "payment_status": "paid"}
     
     # Check with Stripe
-    webhook_url = "https://menuqr-12.preview.emergentagent.com/api/webhook/stripe"
+    webhook_url = "https://table-qr-1.preview.emergentagent.com/api/webhook/stripe"
     stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
     
     try:
@@ -723,7 +723,7 @@ async def stripe_webhook(request: Request):
     body = await request.body()
     signature = request.headers.get("Stripe-Signature")
     
-    webhook_url = "https://menuqr-12.preview.emergentagent.com/api/webhook/stripe"
+    webhook_url = "https://table-qr-1.preview.emergentagent.com/api/webhook/stripe"
     stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
     
     try:
