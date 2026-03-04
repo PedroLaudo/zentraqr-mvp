@@ -1,99 +1,127 @@
-# 🍽️ Menu QR - Sistema de Pedidos para Restaurantes
+# Menu QR - Sistema de Pedidos para Restaurantes
 
-Aplicação web completa para pedidos em restaurantes via QR Code com frontend mobile-first para clientes e painel administrativo para gestores.
+Sistema completo para pedidos em restaurantes via QR Code, com interface para clientes e painel administrativo.
 
-## 🎯 Funcionalidades
+## Requisitos
 
-### 👥 Cliente (Mobile-First)
-- ✅ Leitura de QR Code para acesso direto ao menu
-- ✅ Menu digital organizado por categorias
-- ✅ Visualização de produtos com fotos, descrições e preços
-- ✅ Seleção de extras e adicionais
-- ✅ Carrinho de compras interativo
-- ✅ Adicionar observações aos pedidos
-- ✅ Finalização de pedido
-- ✅ Acompanhamento do pedido em tempo real
-- ✅ Pagamento online via Stripe
-- ✅ Botão para chamar empregado
+- **Node.js v18 ou v20 LTS** (NÃO usar v24, causa erros de compatibilidade)
+- **Python 3.10+**
+- **MongoDB** (utiliza MongoDB Atlas)
 
-### 🔐 Administração (Desktop)
-- ✅ Sistema de autenticação JWT
-- ✅ Dashboard com estatísticas em tempo real
-- ✅ Gestão de restaurantes
-- ✅ Gestão de mesas com geração automática de QR codes
-- ✅ Gestão de categorias e produtos
-- ✅ Gestão de extras/adicionais
-- ✅ Visualização de pedidos em tempo real
-- ✅ Atualização de estado dos pedidos
-- ✅ Histórico de pedidos
-- ✅ Estatísticas (faturação, produtos mais vendidos)
-- ✅ Notificações de chamadas de empregado
+## Estrutura do Projeto
 
-## 🚀 Tecnologias
-
-### Backend
-- **FastAPI** - Framework web Python assíncrono
-- **MongoDB** - Base de dados NoSQL
-- **Socket.IO** - WebSockets para atualizações em tempo real
-- **JWT** - Autenticação segura
-- **Stripe** - Processamento de pagamentos
-- **QRCode** - Geração de códigos QR
-
-### Frontend
-- **React 19** - Framework JavaScript
-- **React Router** - Navegação SPA
-- **Axios** - Cliente HTTP
-- **Socket.IO Client** - Comunicação em tempo real
-- **Framer Motion** - Animações fluidas
-- **Tailwind CSS** - Estilização moderna
-- **Lucide React** - Ícones
-
-## 🎨 Design
-
-### Tema "Savory Pop"
-- **Cores Primárias**: 
-  - Zest Orange (#FF5500) - CTAs e acentos
-  - Fresh Basil (#10B981) - Sucesso e estados positivos
-  - Mac 'n Cheese (#F59E0B) - Destaques
-  
-- **Tipografia**:
-  - Headings: Outfit (Google Fonts)
-  - Body: Plus Jakarta Sans (Google Fonts)
-
-## 🔐 Credenciais de Teste
-
-**Admin**
-- Email: `admin@demo.com`
-- Password: `admin123`
-
-**Stripe**
-- Chave de teste já configurada: `sk_test_emergent`
-
-## 📊 Base de Dados
-
-### Popular Base de Dados
-```bash
-cd /app/backend
-python seed_data.py
+```
+├── backend/          # API FastAPI
+│   ├── server.py     # Servidor principal
+│   ├── .env.local    # Configuração local (copiar para .env)
+│   └── requirements.txt
+├── frontend/         # Interface React
+│   ├── src/
+│   ├── .env.local    # Configuração local (copiar para .env)
+│   └── package.json
+└── scripts/
+    └── seed_data.py  # Script para popular a base de dados
 ```
 
-Isto cria: 1 restaurante, 1 admin, 10 mesas, 6 categorias, 13 produtos
+## Instalação e Execução Local
 
-## 🌐 URLs Principais
+### 1. Configurar o Backend
 
-- Landing: `/`
-- Menu: `/menu?restaurant_id={id}&table_id={id}`
-- Admin: `/admin/login`
-- Dashboard: `/admin/dashboard`
+```bash
+cd backend
 
-## 📝 Próximas Melhorias
+# Copiar ficheiro de configuração local
+copy .env.local .env    # Windows
+# ou
+cp .env.local .env      # Linux/Mac
 
-- Gestão completa de menu/mesas no admin (interface visual)
-- Sistema de notificações push
-- Multi-idioma (PT/EN/ES)
-- PWA para instalação
-- Sistema de avaliações
+# Criar ambiente virtual
+python -m venv venv
 
----
+# Ativar ambiente virtual
+venv\Scripts\activate   # Windows
+# ou
+source venv/bin/activate  # Linux/Mac
 
-**Desenvolvido com ❤️ usando Emergent AI**
+# Instalar dependências
+pip install -r requirements.txt
+
+# Iniciar o servidor
+uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+```
+
+### 2. Configurar o Frontend (num novo terminal)
+
+```bash
+cd frontend
+
+# Copiar ficheiro de configuração local
+copy .env.local .env    # Windows
+# ou
+cp .env.local .env      # Linux/Mac
+
+# Instalar dependências (usar --legacy-peer-deps)
+npm install --legacy-peer-deps
+
+# Iniciar o servidor de desenvolvimento
+npm start
+```
+
+### 3. Aceder à Aplicação
+
+- **Frontend (Cliente):** http://localhost:3000
+- **Painel Admin:** http://localhost:3000/admin/login
+- **API Backend:** http://localhost:8001/api
+
+### Credenciais de Teste
+
+- **Email:** admin@demo.com
+- **Password:** admin123
+
+## Resolução de Problemas
+
+### Erro: Cannot find module 'ajv/dist/compile/codegen'
+**Causa:** Versão do Node.js incompatível (v24+)
+**Solução:** Instalar Node.js v18 ou v20 LTS
+
+```bash
+# Verificar versão do Node
+node -v
+
+# Se for v24+, fazer downgrade para v20
+# Descarregar de: https://nodejs.org/en/download/
+```
+
+### Erro 404 no Login
+**Causa:** Backend não está a correr ou URL incorreta
+**Solução:** 
+1. Verificar se o backend está a correr na porta 8001
+2. Verificar se o ficheiro `frontend/.env` contém `REACT_APP_BACKEND_URL=http://localhost:8001`
+
+### Erro de CORS
+**Causa:** Origem não permitida
+**Solução:** Verificar se `backend/.env` contém `CORS_ORIGINS="http://localhost:3000"`
+
+## Funcionalidades
+
+### Interface do Cliente
+- Visualização do menu por categorias
+- Carrinho de compras
+- Seleção de quantidade e extras
+- Observações no pedido
+- Pagamento online (Stripe) ou no balcão
+- Acompanhamento do estado do pedido em tempo real
+
+### Painel Administrativo
+- Dashboard com estatísticas
+- Gestão de pedidos em tempo real
+- Histórico de pedidos
+- Gestão de menu (categorias e produtos)
+- Configurações do restaurante (nome, logo, cores)
+
+## Tecnologias
+
+- **Frontend:** React, Tailwind CSS, Socket.IO Client
+- **Backend:** FastAPI, Motor (MongoDB async), PyJWT
+- **Base de Dados:** MongoDB Atlas
+- **Pagamentos:** Stripe (modo de teste)
