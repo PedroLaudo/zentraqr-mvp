@@ -17,7 +17,7 @@ const RestaurantSettings = () => {
     address: '',
     phone: '',
     logo_url: '',
-    primary_color: '#FF5500',
+    primary_color: '#1E2A4A',
     secondary_color: '#10B981'
   });
   const [saving, setSaving] = useState(false);
@@ -39,7 +39,7 @@ const RestaurantSettings = () => {
         address: response.data.address || '',
         phone: response.data.phone || '',
         logo_url: response.data.logo_url || '',
-        primary_color: response.data.primary_color || '#FF5500',
+        primary_color: response.data.primary_color || '#1E2A4A',
         secondary_color: response.data.secondary_color || '#10B981'
       });
     } catch (error) {
@@ -136,7 +136,7 @@ const RestaurantSettings = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FF5500]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1E2A4A]"></div>
       </div>
     );
   }
@@ -236,7 +236,7 @@ const RestaurantSettings = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
                   placeholder="Ex: Restaurante Demo"
                 />
               </div>
@@ -248,7 +248,7 @@ const RestaurantSettings = () => {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
                   rows={3}
                   placeholder="Breve descrição do restaurante"
                 />
@@ -263,7 +263,7 @@ const RestaurantSettings = () => {
                     type="text"
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
                     placeholder="Rua, número"
                   />
                 </div>
@@ -276,7 +276,7 @@ const RestaurantSettings = () => {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
                     placeholder="+351 912 345 678"
                   />
                 </div>
@@ -310,10 +310,10 @@ const RestaurantSettings = () => {
                   {/* File Upload */}
                   <div className="flex flex-col gap-3">
                     <label className="cursor-pointer">
-                      <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#FF5500] transition-all">
+                      <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#1E2A4A] transition-all">
                         {uploading ? (
                           <>
-                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#FF5500]"></div>
+                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#1E2A4A]"></div>
                             <span className="text-sm text-gray-600">A carregar...</span>
                           </>
                         ) : (
@@ -350,7 +350,7 @@ const RestaurantSettings = () => {
                       type="url"
                       value={formData.logo_url}
                       onChange={(e) => setFormData({...formData, logo_url: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500]"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
                       placeholder="https://exemplo.com/logo.png"
                     />
                   </div>
@@ -372,8 +372,8 @@ const RestaurantSettings = () => {
                         type="text"
                         value={formData.primary_color}
                         onChange={(e) => setFormData({...formData, primary_color: e.target.value})}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500] font-mono text-sm"
-                        placeholder="#FF5500"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] font-mono text-sm"
+                        placeholder="#1E2A4A"
                       />
                     </div>
                     <p className="text-xs text-[#71717A] mt-1">
@@ -396,7 +396,7 @@ const RestaurantSettings = () => {
                         type="text"
                         value={formData.secondary_color}
                         onChange={(e) => setFormData({...formData, secondary_color: e.target.value})}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500] font-mono text-sm"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] font-mono text-sm"
                         placeholder="#10B981"
                       />
                     </div>
@@ -408,11 +408,84 @@ const RestaurantSettings = () => {
               </div>
             </div>
 
+            {/* Payments Section */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                Pagamentos
+              </h2>
+
+              <div className="space-y-6">
+                {/* Online Payments Toggle */}
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-[#18181B]">Pagamentos Online</h3>
+                      <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                        Em breve
+                      </span>
+                    </div>
+                    <p className="text-sm text-[#71717A]">
+                      Permitir que os clientes paguem online através de cartão de crédito/débito
+                    </p>
+                  </div>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      disabled
+                      className="relative w-14 h-8 bg-gray-300 rounded-full cursor-not-allowed opacity-60"
+                      title="Pagamentos online serão ativados numa próxima versão da plataforma."
+                    >
+                      <span className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full shadow transition-all" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Info box about current payment method */}
+                <div className="p-4 bg-[#1E2A4A]/5 rounded-xl border border-[#1E2A4A]/10">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-[#1E2A4A] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-sm text-[#1E2A4A] font-medium">
+                        Método de Pagamento Atual
+                      </p>
+                      <p className="text-sm text-[#1E2A4A]/70 mt-1">
+                        Os seus clientes fazem o pedido através da aplicação e o pagamento é realizado diretamente no restaurante (balcão ou mesa).
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Coming soon features */}
+                <div className="border border-dashed border-gray-300 rounded-xl p-4">
+                  <p className="text-sm font-medium text-[#71717A] mb-3">Funcionalidades em desenvolvimento:</p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2 text-sm text-[#71717A]">
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                      Pagamentos com cartão via Stripe
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-[#71717A]">
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                      MB Way
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-[#71717A]">
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                      Divisão de conta
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-3">
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-[#FF5500] hover:bg-[#CC4400] text-white px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 bg-[#1E2A4A] hover:bg-[#0f1529] text-white px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>

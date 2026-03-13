@@ -80,7 +80,7 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
   const [waiterCalled, setWaiterCalled] = useState(false);
 
   // Use primary color or fallback
-  const brandPrimary = primaryColor || '#FF5500';
+  const brandPrimary = primaryColor || '#1E2A4A';
   const brandSecondary = secondaryColor || '#10B981';
 
   useEffect(() => {
