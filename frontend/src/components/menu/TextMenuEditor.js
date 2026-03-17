@@ -1,0 +1,436 @@
+import React, { useState, useEffect } from 'react';
+import { Plus, Save, Eye, GripVertical, Trash2, Edit2, X } from 'lucide-react';
+import axios from 'axios';
+
+const API = `${process.env.REACT_APP_BACKEND_URL || ""}/api`;
+
+const TextMenuEditor = ({ restaurantId, onSave }) => {
+  const [menuData, setMenuData] = useState({
+    title: '',
+    subtitle: '',
+    sections: []
+  });
+  const [selectedTemplate, setSelectedTemplate] = useState('classic');
+  const [saving, setSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [editingSection, setEditingSection] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
+
+  useEffect(() => {
+    loadMenuConfig();
+  }, [restaurantId]);
+
+  const loadMenuConfig = async () => {
+    try {
+      const response = await axios.get(`${API}/restaurants/${restaurantId}/menu-config`);
+      if (response.data.text_menu_data) {
+        setMenuData(response.data.text_menu_data);
+      }
+      if (response.data.text_menu_template) {
+        setSelectedTemplate(response.data.text_menu_template);
+      }
+    } catch (error) {
+      console.error('Error loading menu config:', error);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await axios.put(
+        `${API}/restaurants/${restaurantId}/menu-config`,
+        {
+          active_menu_type: 'text',
+          text_menu_template: selectedTemplate,
+          text_menu_data: menuData
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      alert('Menu guardado com sucesso!');
+      if (onSave) onSave();
+    } catch (error) {
+      console.error('Error saving menu:', error);
+      alert('Erro ao guardar menu');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const addSection = () => {
+    const newSection = {
+      id: `section-${Date.now()}`,
+      title: 'Nova Secção',
+      display_order: menuData.sections.length,
+      items: []
+    };
+    setMenuData({
+      ...menuData,
+      sections: [...menuData.sections, newSection]
+    });
+    setEditingSection(newSection.id);
+  };
+
+  const updateSection = (sectionId, updates) => {
+    setMenuData({
+      ...menuData,
+      sections: menuData.sections.map(section =>
+        section.id === sectionId ? { ...section, ...updates } : section
+      )
+    });
+  };
+
+  const deleteSection = (sectionId) => {
+    if (window.confirm('Deseja eliminar esta secção?')) {
+      setMenuData({
+        ...menuData,
+        sections: menuData.sections.filter(section => section.id !== sectionId)
+      });
+    }
+  };
+
+  const addItem = (sectionId) => {
+    const section = menuData.sections.find(s => s.id === sectionId);
+    const newItem = {
+      id: `item-${Date.now()}`,
+      name: 'Novo Item',
+      description: '',
+      price: 0,
+      highlighted: false,
+      display_order: section.items.length
+    };
+    
+    updateSection(sectionId, {
+      items: [...section.items, newItem]
+    });
+    setEditingItem({ sectionId, itemId: newItem.id });
+  };
+
+  const updateItem = (sectionId, itemId, updates) => {
+    const section = menuData.sections.find(s => s.id === sectionId);
+    const updatedItems = section.items.map(item =>
+      item.id === itemId ? { ...item, ...updates } : item
+    );
+    updateSection(sectionId, { items: updatedItems });
+  };
+
+  const deleteItem = (sectionId, itemId) => {
+    if (window.confirm('Deseja eliminar este item?')) {
+      const section = menuData.sections.find(s => s.id === sectionId);
+      updateSection(sectionId, {
+        items: section.items.filter(item => item.id !== itemId)
+      });
+    }
+  };
+
+  const moveSection = (index, direction) => {
+    const newSections = [...menuData.sections];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    if (targetIndex < 0 || targetIndex >= newSections.length) return;
+    
+    [newSections[index], newSections[targetIndex]] = [newSections[targetIndex], newSections[index]];
+    setMenuData({ ...menuData, sections: newSections });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header Info */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          Informações Gerais
+        </h2>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+              Título do Menu *
+            </label>
+            <input
+              type="text"
+              value={menuData.title}
+              onChange={(e) => setMenuData({ ...menuData, title: e.target.value })}
+              placeholder="Ex: Carta do Restaurante"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+              Subtítulo (opcional)
+            </label>
+            <input
+              type="text"
+              value={menuData.subtitle}
+              onChange={(e) => setMenuData({ ...menuData, subtitle: e.target.value })}
+              placeholder="Ex: Cozinha Portuguesa Tradicional"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+              Template de Apresentação
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {['classic', 'modern', 'cafe'].map((template) => (
+                <button
+                  key={template}
+                  onClick={() => setSelectedTemplate(template)}
+                  className={`p-4 border-2 rounded-lg transition-all ${
+                    selectedTemplate === template
+                      ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                  }`}
+                >
+                  <div className="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                    {template === 'classic' && '📜 Clássico'}
+                    {template === 'modern' && '✨ Moderno'}
+                    {template === 'cafe' && '☕ Café'}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sections */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Secções do Menu</h2>
+          <button
+            onClick={addSection}
+            className="flex items-center gap-2 bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all"
+          >
+            <Plus className="w-5 h-5" />
+            Adicionar Secção
+          </button>
+        </div>
+
+        {menuData.sections.length === 0 ? (
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+            <p className="mb-4">Ainda não há secções no menu</p>
+            <button
+              onClick={addSection}
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Adicionar primeira secção
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {menuData.sections.map((section, index) => (
+              <SectionEditor
+                key={section.id}
+                section={section}
+                index={index}
+                totalSections={menuData.sections.length}
+                onUpdate={(updates) => updateSection(section.id, updates)}
+                onDelete={() => deleteSection(section.id)}
+                onMove={moveSection}
+                onAddItem={() => addItem(section.id)}
+                onUpdateItem={(itemId, updates) => updateItem(section.id, itemId, updates)}
+                onDeleteItem={(itemId) => deleteItem(section.id, itemId)}
+                isEditing={editingSection === section.id}
+                setEditing={(editing) => setEditingSection(editing ? section.id : null)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3 justify-end">
+        <button
+          onClick={() => setShowPreview(!showPreview)}
+          className="flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+        >
+          <Eye className="w-5 h-5" />
+          {showPreview ? 'Esconder' : 'Pré-visualizar'}
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={saving || !menuData.title}
+          className="flex items-center gap-2 px-6 py-3 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save className="w-5 h-5" />
+          {saving ? 'A guardar...' : 'Guardar Menu'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const SectionEditor = ({
+  section,
+  index,
+  totalSections,
+  onUpdate,
+  onDelete,
+  onMove,
+  onAddItem,
+  onUpdateItem,
+  onDeleteItem,
+  isEditing,
+  setEditing
+}) => {
+  return (
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-700/50">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-2 flex-1">
+          <GripVertical className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+          {isEditing ? (
+            <input
+              type="text"
+              value={section.title}
+              onChange={(e) => onUpdate({ title: e.target.value })}
+              onBlur={() => setEditing(false)}
+              autoFocus
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          ) : (
+            <h3
+              onClick={() => setEditing(true)}
+              className="text-lg font-bold text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400"
+            >
+              {section.title}
+            </h3>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {index > 0 && (
+            <button
+              onClick={() => onMove(index, 'up')}
+              className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              title="Mover para cima"
+            >
+              ↑
+            </button>
+          )}
+          {index < totalSections - 1 && (
+            <button
+              onClick={() => onMove(index, 'down')}
+              className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              title="Mover para baixo"
+            >
+              ↓
+            </button>
+          )}
+          <button
+            onClick={onDelete}
+            className="p-1 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Items */}
+      <div className="space-y-2 ml-7">
+        {section.items.map((item) => (
+          <ItemEditor
+            key={item.id}
+            item={item}
+            onUpdate={(updates) => onUpdateItem(item.id, updates)}
+            onDelete={() => onDeleteItem(item.id)}
+          />
+        ))}
+
+        <button
+          onClick={onAddItem}
+          className="w-full p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 hover:border-blue-500 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center justify-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Adicionar Item
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const ItemEditor = ({ item, onUpdate, onDelete }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <div className="flex-1 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-gray-900 dark:text-white">{item.name}</span>
+            {item.highlighted && (
+              <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 px-2 py-0.5 rounded">
+                ⭐ Destaque
+              </span>
+            )}
+            <span className="text-sm font-bold text-blue-600 dark:text-blue-400">€{item.price.toFixed(2)}</span>
+          </div>
+          {item.description && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">{item.description}</p>
+          )}
+        </div>
+        <button
+          onClick={onDelete}
+          className="p-1 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+
+      {isExpanded && (
+        <div className="mt-3 space-y-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nome</label>
+            <input
+              type="text"
+              value={item.name}
+              onChange={(e) => onUpdate({ name: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Descrição</label>
+            <textarea
+              value={item.description}
+              onChange={(e) => onUpdate({ description: e.target.value })}
+              rows={2}
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Preço (€)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={item.price}
+                onChange={(e) => onUpdate({ price: parseFloat(e.target.value) || 0 })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex items-end">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={item.highlighted}
+                  onChange={(e) => onUpdate({ highlighted: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-xs text-gray-700 dark:text-gray-300">Destaque</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TextMenuEditor;

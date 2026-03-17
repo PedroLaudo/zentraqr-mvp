@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon, Upload, Camera } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import TextMenuEditor from '../components/menu/TextMenuEditor';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -147,10 +148,44 @@ const MenuManagement = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // New state for menu type
+  const [menuType, setMenuType] = useState('image'); // 'image' | 'text'
+  const [loadingMenuConfig, setLoadingMenuConfig] = useState(true);
 
   useEffect(() => {
     loadData();
+    loadMenuConfig();
   }, []);
+
+  const loadMenuConfig = async () => {
+    try {
+      const response = await axios.get(`${API}/restaurants/${user.restaurant_id}/menu-config`);
+      setMenuType(response.data.active_menu_type || 'image');
+    } catch (error) {
+      console.error('Erro ao carregar configuração do menu:', error);
+    } finally {
+      setLoadingMenuConfig(false);
+    }
+  };
+
+  const handleMenuTypeChange = async (newType) => {
+    try {
+      await axios.put(
+        `${API}/restaurants/${user.restaurant_id}/menu-config`,
+        { active_menu_type: newType },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      setMenuType(newType);
+    } catch (error) {
+      console.error('Erro ao atualizar tipo de menu:', error);
+      alert('Erro ao atualizar tipo de menu');
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -181,7 +216,7 @@ const MenuManagement = () => {
     ? products 
     : products.filter(p => p.category_id === selectedCategory);
 
-  if (loading) {
+  if (loading || loadingMenuConfig) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1a2342] dark:border-blue-400"></div>
@@ -193,83 +228,136 @@ const MenuManagement = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-[#18181B] dark:text-white">Gestão de Menu</h1>
-        <div className="flex gap-3">
-          <button
-            data-testid="add-category-button"
-            onClick={() => handleOpenCategoryModal()}
-            className="bg-[#10B981] dark:bg-green-700 hover:bg-[#059669] dark:hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Nova Categoria
-          </button>
-          <button
-            data-testid="add-product-button"
-            onClick={() => handleOpenProductModal()}
-            className="bg-[#1a2342] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Novo Produto
-          </button>
-        </div>
       </div>
 
-      {/* Categories */}
+      {/* Menu Type Toggle */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 mb-6">
-        <h2 className="text-xl font-bold text-[#18181B] dark:text-white mb-4">Categorias</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {categories.map((cat) => (
-            <CategoryCard
-              key={cat.id}
-              category={cat}
-              onEdit={() => handleOpenCategoryModal(cat)}
-              onDelete={async () => {
-                if (window.confirm('Desativar esta categoria?')) {
-                  await axios.delete(`${API}/categories/${cat.id}`);
-                  loadData();
-                }
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Products */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-[#18181B] dark:text-white">Produtos</h2>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
+        <h2 className="text-lg font-bold text-[#18181B] dark:text-white mb-4">Tipo de Menu</h2>
+        <div className="flex gap-4">
+          <button
+            onClick={() => handleMenuTypeChange('image')}
+            className={`flex-1 px-6 py-4 rounded-lg border-2 transition-all ${
+              menuType === 'image'
+                ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
+            }`}
           >
-            <option value="all">Todas as categorias</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-        </div>
+            <div className="text-center">
+              <div className="text-2xl mb-2">🖼️</div>
+              <div className="font-medium">Menu por Imagem</div>
+              <div className="text-sm mt-1 opacity-75">
+                {menuType === 'image' ? '(Ativo)' : 'Produtos com fotos'}
+              </div>
+            </div>
+          </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              categories={categories}
-              onEdit={() => handleOpenProductModal(product)}
-              onDelete={async () => {
-                if (window.confirm('Desativar este produto?')) {
-                  await axios.delete(`${API}/products/${product.id}`);
-                  loadData();
-                }
-              }}
-            />
-          ))}
+          <button
+            onClick={() => handleMenuTypeChange('text')}
+            className={`flex-1 px-6 py-4 rounded-lg border-2 transition-all ${
+              menuType === 'text'
+                ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
+            }`}
+          >
+            <div className="text-center">
+              <div className="text-2xl mb-2">📄</div>
+              <div className="font-medium">Menu por Texto</div>
+              <div className="text-sm mt-1 opacity-75">
+                {menuType === 'text' ? '(Ativo)' : 'Carta tradicional'}
+              </div>
+            </div>
+          </button>
         </div>
-
-        {filteredProducts.length === 0 && (
-          <p className="text-center text-[#71717A] dark:text-gray-400 py-12">Nenhum produto nesta categoria</p>
-        )}
       </div>
+
+      {/* Render appropriate editor based on menu type */}
+      {menuType === 'text' ? (
+        <TextMenuEditor 
+          restaurantId={user.restaurant_id} 
+          onSave={() => {
+            // Optional: callback after save
+          }}
+        />
+      ) : (
+        <>
+          <div className="flex items-center justify-end gap-3 mb-6">
+            <button
+              data-testid="add-category-button"
+              onClick={() => handleOpenCategoryModal()}
+              className="bg-[#10B981] dark:bg-green-700 hover:bg-[#059669] dark:hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              Nova Categoria
+            </button>
+            <button
+              data-testid="add-product-button"
+              onClick={() => handleOpenProductModal()}
+              className="bg-[#1a2342] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              Novo Produto
+            </button>
+          </div>
+
+          {/* Categories */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 mb-6">
+            <h2 className="text-xl font-bold text-[#18181B] dark:text-white mb-4">Categorias</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {categories.map((cat) => (
+                <CategoryCard
+                  key={cat.id}
+                  category={cat}
+                  onEdit={() => handleOpenCategoryModal(cat)}
+                  onDelete={async () => {
+                    if (window.confirm('Desativar esta categoria?')) {
+                      await axios.delete(`${API}/categories/${cat.id}`);
+                      loadData();
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Products */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-[#18181B] dark:text-white">Produtos</h2>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
+              >
+                <option value="all">Todas as categorias</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  categories={categories}
+                  onEdit={() => handleOpenProductModal(product)}
+                  onDelete={async () => {
+                    if (window.confirm('Desativar este produto?')) {
+                      await axios.delete(`${API}/products/${product.id}`);
+                      loadData();
+                    }
+                  }}
+                />
+              ))}
+            </div>
+
+            {filteredProducts.length === 0 && (
+              <p className="text-center text-[#71717A] dark:text-gray-400 py-12">Nenhum produto nesta categoria</p>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Modals */}
       {showCategoryModal && (

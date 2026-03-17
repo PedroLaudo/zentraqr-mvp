@@ -124,6 +124,8 @@ class Restaurant(BaseModel):
     primary_color: str = "#FF5500"
     secondary_color: str = "#10B981"
     active: bool = True
+    # Menu configuration
+    menu_config: Optional[Dict[str, Any]] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class RestaurantCreate(BaseModel):
@@ -383,6 +385,45 @@ class ProductCreate(BaseModel):
     price: float
     image_url: Optional[str] = None
     extras: List[ExtraCreate] = []
+
+# ============= TEXT MENU MODELS =============
+
+class TextMenuItem(BaseModel):
+    """Individual item in a text menu section"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: Optional[str] = None
+    price: float
+    highlighted: bool = False  # chef recommendation / popular
+    display_order: int = 0
+
+class TextMenuSection(BaseModel):
+    """Section/Category in a text menu (e.g., Entradas, Pratos Principais)"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    display_order: int = 0
+    items: List[TextMenuItem] = []
+
+class TextMenuData(BaseModel):
+    """Complete text menu data structure"""
+    title: str  # e.g., "Carta do Restaurante"
+    subtitle: Optional[str] = None  # e.g., "Cozinha Portuguesa Tradicional"
+    sections: List[TextMenuSection] = []
+
+class MenuConfig(BaseModel):
+    """Restaurant menu configuration"""
+    model_config = ConfigDict(extra="ignore")
+    active_menu_type: str = "image"  # "image" | "text"
+    text_menu_template: str = "classic"  # "classic" | "modern" | "cafe"
+    text_menu_data: Optional[TextMenuData] = None
+
+class MenuConfigUpdate(BaseModel):
+    """Update menu configuration"""
+    active_menu_type: Optional[str] = None
+    text_menu_template: Optional[str] = None
+    text_menu_data: Optional[TextMenuData] = None
 
 class OrderItem(BaseModel):
     product_id: str
@@ -953,6 +994,59 @@ async def update_restaurant(restaurant_id: str, restaurant: RestaurantCreate, cu
     if isinstance(updated['created_at'], str):
         updated['created_at'] = datetime.fromisoformat(updated['created_at'])
     return updated
+
+# ============= MENU CONFIG ROUTES =============
+
+@api_router.get("/restaurants/{restaurant_id}/menu-config")
+async def get_menu_config(restaurant_id: str):
+    """Get restaurant menu configuration"""
+    restaurant = await db.restaurants.find_one({"id": restaurant_id}, {"_id": 0})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurante não encontrado")
+    
+    # Return menu_config or default values
+    menu_config = restaurant.get('menu_config', {
+        'active_menu_type': 'image',
+        'text_menu_template': 'classic',
+        'text_menu_data': None
+    })
+    
+    return menu_config
+
+@api_router.put("/restaurants/{restaurant_id}/menu-config")
+async def update_menu_config(
+    restaurant_id: str, 
+    menu_config: MenuConfigUpdate, 
+    current_user: dict = Depends(get_current_user)
+):
+    """Update restaurant menu configuration"""
+    if current_user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    restaurant = await db.restaurants.find_one({"id": restaurant_id})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurante não encontrado")
+    
+    # Get current menu_config or create default
+    current_config = restaurant.get('menu_config', {
+        'active_menu_type': 'image',
+        'text_menu_template': 'classic',
+        'text_menu_data': None
+    })
+    
+    # Update only provided fields
+    update_data = menu_config.model_dump(exclude_none=True)
+    for key, value in update_data.items():
+        if value is not None:
+            current_config[key] = value
+    
+    # Save to database
+    await db.restaurants.update_one(
+        {"id": restaurant_id}, 
+        {"$set": {"menu_config": current_config}}
+    )
+    
+    return current_config
 
 # ============= TABLE ROUTES =============
 
