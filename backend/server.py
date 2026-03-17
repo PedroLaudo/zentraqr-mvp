@@ -1093,8 +1093,16 @@ async def get_table_qrcode(table_id: str):
     if not table:
         raise HTTPException(status_code=404, detail="Mesa não encontrada")
     
-    # Generate QR code URL
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://order-lifecycle-12.preview.emergentagent.com')
+    # Generate QR code URL - use env var or raise error if not set properly
+    frontend_url = os.environ.get('FRONTEND_URL', '')
+    if not frontend_url or frontend_url == '/':
+        # Fallback to CORS origins first entry if FRONTEND_URL not set
+        cors_origins = os.environ.get('CORS_ORIGINS', '')
+        if cors_origins:
+            frontend_url = cors_origins.split(',')[0]
+        else:
+            raise HTTPException(status_code=500, detail="FRONTEND_URL not configured")
+    
     qr_data = f"{frontend_url}/menu?restaurant_id={table['restaurant_id']}&table_id={table['id']}"
     
     # Generate styled QR code with logo
@@ -1160,7 +1168,15 @@ async def get_table_qrcode_data(table_id: str):
     if not table:
         raise HTTPException(status_code=404, detail="Mesa não encontrada")
     
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://order-lifecycle-12.preview.emergentagent.com')
+    # Use same logic as qrcode generation
+    frontend_url = os.environ.get('FRONTEND_URL', '')
+    if not frontend_url or frontend_url == '/':
+        cors_origins = os.environ.get('CORS_ORIGINS', '')
+        if cors_origins:
+            frontend_url = cors_origins.split(',')[0]
+        else:
+            raise HTTPException(status_code=500, detail="FRONTEND_URL not configured")
+    
     qr_url = f"{frontend_url}/menu?restaurant_id={table['restaurant_id']}&table_id={table['id']}"
     
     return {
