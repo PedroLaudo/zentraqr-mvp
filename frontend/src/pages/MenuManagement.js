@@ -73,23 +73,23 @@ const ImageUploader = ({ currentImage, onImageChange }) => {
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-[#18181B]">Imagem</label>
+      <label className="block text-sm font-medium text-[#18181B] dark:text-white">Imagem</label>
       
       {preview ? (
         <div className="relative">
           <img 
             src={preview} 
             alt="Preview" 
-            className="w-full h-40 object-cover rounded-lg border border-gray-200"
+            className="w-full h-40 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
           />
           <div className="absolute top-2 right-2 flex gap-2">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="bg-white/90 hover:bg-white p-2 rounded-lg shadow-md transition-all"
+              className="bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 p-2 rounded-lg shadow-md transition-all"
               title="Alterar imagem"
             >
-              <Camera className="w-4 h-4 text-gray-700" />
+              <Camera className="w-4 h-4 text-gray-700 dark:text-gray-300" />
             </button>
             <button
               type="button"
@@ -109,18 +109,18 @@ const ImageUploader = ({ currentImage, onImageChange }) => {
       ) : (
         <div 
           onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-[#1a2342] hover:bg-gray-50 transition-all"
+          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center cursor-pointer hover:border-[#1a2342] dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
         >
           {uploading ? (
             <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1a2342] mb-2"></div>
-              <p className="text-sm text-gray-500">A carregar...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1a2342] dark:border-blue-400 mb-2"></div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">A carregar...</p>
             </div>
           ) : (
             <>
-              <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600 font-medium">Clique para fazer upload</p>
-              <p className="text-xs text-gray-400 mt-1">JPEG, PNG, GIF ou WebP (máx. 5MB)</p>
+              <Upload className="w-10 h-10 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Clique para fazer upload</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">JPEG, PNG, GIF ou WebP (máx. 5MB)</p>
             </>
           )}
         </div>
@@ -184,7 +184,7 @@ const MenuManagement = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1a2342]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1a2342] dark:border-blue-400"></div>
       </div>
     );
   }
@@ -192,12 +192,12 @@ const MenuManagement = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-[#18181B]">Gestão de Menu</h1>
+        <h1 className="text-3xl font-bold text-[#18181B] dark:text-white">Gestão de Menu</h1>
         <div className="flex gap-3">
           <button
             data-testid="add-category-button"
             onClick={() => handleOpenCategoryModal()}
-            className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+            className="bg-[#10B981] dark:bg-green-700 hover:bg-[#059669] dark:hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
             Nova Categoria
@@ -205,7 +205,7 @@ const MenuManagement = () => {
           <button
             data-testid="add-product-button"
             onClick={() => handleOpenProductModal()}
-            className="bg-[#1a2342] hover:bg-[#0f1529] text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+            className="bg-[#1a2342] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
             Novo Produto
@@ -214,8 +214,8 @@ const MenuManagement = () => {
       </div>
 
       {/* Categories */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-        <h2 className="text-xl font-bold text-[#18181B] mb-4">Categorias</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 mb-6">
+        <h2 className="text-xl font-bold text-[#18181B] dark:text-white mb-4">Categorias</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {categories.map((cat) => (
             <CategoryCard
@@ -234,13 +234,13 @@ const MenuManagement = () => {
       </div>
 
       {/* Products */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-[#18181B]">Produtos</h2>
+          <h2 className="text-xl font-bold text-[#18181B] dark:text-white">Produtos</h2>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
           >
             <option value="all">Todas as categorias</option>
             {categories.map((cat) => (
@@ -267,7 +267,7 @@ const MenuManagement = () => {
         </div>
 
         {filteredProducts.length === 0 && (
-          <p className="text-center text-[#71717A] py-12">Nenhum produto nesta categoria</p>
+          <p className="text-center text-[#71717A] dark:text-gray-400 py-12">Nenhum produto nesta categoria</p>
         )}
       </div>
 
@@ -310,23 +310,23 @@ const MenuManagement = () => {
 
 const CategoryCard = ({ category, onEdit, onDelete }) => {
   return (
-    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-700/50 hover:shadow-md transition-all">
       {category.image_url && (
         <img src={category.image_url} alt={category.name} className="w-full h-24 object-cover rounded-lg mb-3" />
       )}
-      <h3 className="font-bold text-[#18181B] mb-1">{category.name}</h3>
-      <p className="text-sm text-[#71717A] mb-3 line-clamp-2">{category.description}</p>
+      <h3 className="font-bold text-[#18181B] dark:text-white mb-1">{category.name}</h3>
+      <p className="text-sm text-[#71717A] dark:text-gray-400 mb-3 line-clamp-2">{category.description}</p>
       <div className="flex gap-2">
         <button
           onClick={onEdit}
-          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1"
+          className="flex-1 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1"
         >
           <Edit2 className="w-4 h-4" />
           Editar
         </button>
         <button
           onClick={onDelete}
-          className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+          className="bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg text-sm font-medium transition-all"
         >
           <Trash2 className="w-4 h-4" />
         </button>
@@ -339,33 +339,33 @@ const ProductCard = ({ product, categories, onEdit, onDelete }) => {
   const category = categories.find(c => c.id === product.category_id);
   
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-all">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-700/50 hover:shadow-md transition-all">
       {product.image_url && (
         <img src={product.image_url} alt={product.name} className="w-full h-32 object-cover" />
       )}
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-bold text-[#18181B]">{product.name}</h3>
-          <span className="text-lg font-bold text-[#1a2342]">€{product.price.toFixed(2)}</span>
+          <h3 className="font-bold text-[#18181B] dark:text-white">{product.name}</h3>
+          <span className="text-lg font-bold text-[#1a2342] dark:text-blue-400">€{product.price.toFixed(2)}</span>
         </div>
-        <p className="text-xs text-[#71717A] mb-2">{category?.name}</p>
-        <p className="text-sm text-[#71717A] mb-3 line-clamp-2">{product.description}</p>
+        <p className="text-xs text-[#71717A] dark:text-gray-400 mb-2">{category?.name}</p>
+        <p className="text-sm text-[#71717A] dark:text-gray-400 mb-3 line-clamp-2">{product.description}</p>
         {product.extras && product.extras.length > 0 && (
-          <p className="text-xs text-[#71717A] mb-3">
+          <p className="text-xs text-[#71717A] dark:text-gray-400 mb-3">
             {product.extras.length} extra(s) disponível(is)
           </p>
         )}
         <div className="flex gap-2">
           <button
             onClick={onEdit}
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1"
+            className="flex-1 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1"
           >
             <Edit2 className="w-4 h-4" />
             Editar
           </button>
           <button
             onClick={onDelete}
-            className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+            className="bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg text-sm font-medium transition-all"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -411,35 +411,35 @@ const CategoryModal = ({ category, onClose, onSave, restaurantId }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-[#18181B]">
+          <h2 className="text-2xl font-bold text-[#18181B] dark:text-white">
             {category ? 'Editar Categoria' : 'Nova Categoria'}
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#18181B] mb-2">Nome *</label>
+            <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Nome *</label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
               placeholder="Ex: Hambúrgueres"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#18181B] mb-2">Descrição</label>
+            <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Descrição</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
               rows={3}
               placeholder="Descrição da categoria"
             />
@@ -451,12 +451,12 @@ const CategoryModal = ({ category, onClose, onSave, restaurantId }) => {
           />
 
           <div>
-            <label className="block text-sm font-medium text-[#18181B] mb-2">Ordem de Exibição</label>
+            <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Ordem de Exibição</label>
             <input
               type="number"
               value={formData.display_order}
               onChange={(e) => setFormData({...formData, display_order: parseInt(e.target.value)})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
               min="0"
             />
           </div>
@@ -465,14 +465,14 @@ const CategoryModal = ({ category, onClose, onSave, restaurantId }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-medium transition-all"
+              className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-3 rounded-lg font-medium transition-all"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-[#1a2342] hover:bg-[#0f1529] text-white px-4 py-3 rounded-lg font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 bg-[#1a2342] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white px-4 py-3 rounded-lg font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {saving ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
@@ -546,12 +546,12 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-[#18181B]">
+          <h2 className="text-2xl font-bold text-[#18181B] dark:text-white">
             {product ? 'Editar Produto' : 'Novo Produto'}
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -559,24 +559,24 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-[#18181B] mb-2">Nome *</label>
+              <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Nome *</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
                 placeholder="Ex: Classic Burger"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#18181B] mb-2">Categoria *</label>
+              <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Categoria *</label>
               <select
                 value={formData.category_id}
                 onChange={(e) => setFormData({...formData, category_id: e.target.value})}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
               >
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -585,25 +585,25 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#18181B] mb-2">Preço (€) *</label>
+              <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Preço (€) *</label>
               <input
                 type="number"
                 step="0.01"
                 value={formData.price}
                 onChange={(e) => setFormData({...formData, price: e.target.value})}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
                 placeholder="0.00"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#18181B] mb-2">Descrição</label>
+            <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Descrição</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
               rows={3}
               placeholder="Descrição do produto"
             />
@@ -615,21 +615,21 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
           />
 
           {/* Extras */}
-          <div className="border-t border-gray-200 pt-4">
-            <label className="block text-sm font-medium text-[#18181B] mb-3">Extras</label>
+          <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+            <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-3">Extras</label>
             
             {formData.extras.length > 0 && (
               <div className="space-y-2 mb-3">
                 {formData.extras.map((extra) => (
-                  <div key={extra.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={extra.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div>
-                      <span className="font-medium">{extra.name}</span>
-                      <span className="text-[#1a2342] ml-2">+€{extra.price.toFixed(2)}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{extra.name}</span>
+                      <span className="text-[#1a2342] dark:text-blue-400 ml-2">+€{extra.price.toFixed(2)}</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveExtra(extra.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -644,7 +644,7 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
                 value={newExtra.name}
                 onChange={(e) => setNewExtra({...newExtra, name: e.target.value})}
                 placeholder="Nome do extra"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
               />
               <input
                 type="number"
@@ -652,12 +652,12 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
                 value={newExtra.price}
                 onChange={(e) => setNewExtra({...newExtra, price: parseFloat(e.target.value)})}
                 placeholder="Preço"
-                className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342]"
+                className="w-24 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
               />
               <button
                 type="button"
                 onClick={handleAddExtra}
-                className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-lg transition-all"
+                className="bg-[#10B981] dark:bg-green-700 hover:bg-[#059669] dark:hover:bg-green-800 text-white px-4 py-2 rounded-lg transition-all"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -668,14 +668,14 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-medium transition-all"
+              className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-3 rounded-lg font-medium transition-all"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-[#1a2342] hover:bg-[#0f1529] text-white px-4 py-3 rounded-lg font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 bg-[#1a2342] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white px-4 py-3 rounded-lg font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {saving ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>

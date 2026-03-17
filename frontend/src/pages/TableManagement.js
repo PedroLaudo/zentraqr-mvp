@@ -240,7 +240,7 @@ const TableManagement = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-[#18181B]">Gestão de Mesas</h1>
+        <h1 className="text-3xl font-bold text-[#18181B] dark:text-white">Gestão de Mesas</h1>
         <div className="flex gap-3">
           {tables.length > 0 && (
             <button
@@ -248,7 +248,7 @@ const TableManagement = () => {
                 setSelectedTable(tables[0]);
                 setShowQREditor(true);
               }}
-              className="flex items-center gap-2 bg-white border-2 border-[#1a2342] text-[#1a2342] hover:bg-[#1a2342] hover:text-white px-4 py-2 rounded-lg font-medium transition-all"
+              className="flex items-center gap-2 bg-white dark:bg-gray-800 border-2 border-[#1a2342] dark:border-blue-600 text-[#1a2342] dark:text-blue-400 hover:bg-[#1a2342] hover:text-white dark:hover:bg-blue-700 dark:hover:text-white px-4 py-2 rounded-lg font-medium transition-all"
               data-testid="customize-qr-button"
             >
               <Palette className="w-5 h-5" />
@@ -257,7 +257,7 @@ const TableManagement = () => {
           )}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-[#1a2342] hover:bg-[#0f1529] text-white px-4 py-2 rounded-lg font-medium transition-all"
+            className="flex items-center gap-2 bg-[#1a2342] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all"
             data-testid="add-table-button"
           >
             <Plus className="w-5 h-5" />
@@ -268,17 +268,17 @@ const TableManagement = () => {
 
       {/* Tables Grid */}
       {loading || refreshing ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
-          <div className="w-16 h-16 border-4 border-[#1a2342] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-[#71717A]">{refreshing ? 'A atualizar mesas...' : 'A carregar mesas...'}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-12 text-center">
+          <div className="w-16 h-16 border-4 border-[#1a2342] dark:border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#71717A] dark:text-gray-400">{refreshing ? 'A atualizar mesas...' : 'A carregar mesas...'}</p>
         </div>
       ) : tables.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
-          <QrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-[#71717A] mb-4">Nenhuma mesa cadastrada</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-12 text-center">
+          <QrCode className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+          <p className="text-[#71717A] dark:text-gray-400 mb-4">Nenhuma mesa cadastrada</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="text-[#1a2342] font-medium hover:underline"
+            className="text-[#1a2342] dark:text-blue-400 font-medium hover:underline"
           >
             Adicione sua primeira mesa
           </button>
@@ -288,11 +288,11 @@ const TableManagement = () => {
           {tables.map((table, index) => (
             <div
               key={table.id}
-              className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-all"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden hover:shadow-md transition-all"
             >
               {/* QR Preview */}
               <div 
-                className="aspect-square bg-gray-50 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-all"
+                className="aspect-square bg-gray-50 dark:bg-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-all"
                 onClick={() => handleShowQR(table)}
               >
                 <img
@@ -305,8 +305,8 @@ const TableManagement = () => {
               {/* Table Info */}
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-bold text-lg text-[#18181B]">Mesa {table.table_number}</h3>
-                  <div className="flex items-center gap-1 text-sm text-[#71717A]">
+                  <h3 className="font-bold text-lg text-[#18181B] dark:text-white">Mesa {table.table_number}</h3>
+                  <div className="flex items-center gap-1 text-sm text-[#71717A] dark:text-gray-400">
                     <Users className="w-4 h-4" />
                     <span>{table.capacity}</span>
                   </div>
@@ -316,7 +316,7 @@ const TableManagement = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => downloadQRCode(table)}
-                    className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[#1E40AF] hover:bg-[#1E3A8A] text-white rounded-lg text-sm font-medium transition-all"
+                    className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[#1E40AF] dark:bg-blue-700 hover:bg-[#1E3A8A] dark:hover:bg-blue-800 text-white rounded-lg text-sm font-medium transition-all"
                     title="Baixar QR Code"
                     data-testid={`download-qr-${table.id}`}
                   >
@@ -328,7 +328,7 @@ const TableManagement = () => {
                       setSelectedTable(table);
                       setShowQREditor(true);
                     }}
-                    className="flex items-center justify-center p-2 bg-[#1a2342]/10 hover:bg-[#1a2342]/20 text-[#1a2342] rounded-lg transition-all"
+                    className="flex items-center justify-center p-2 bg-[#1a2342]/10 dark:bg-blue-900/30 hover:bg-[#1a2342]/20 dark:hover:bg-blue-900/50 text-[#1a2342] dark:text-blue-400 rounded-lg transition-all"
                     title="Personalizar QR Code"
                     data-testid={`customize-qr-${table.id}`}
                   >
@@ -336,7 +336,7 @@ const TableManagement = () => {
                   </button>
                   <button
                     onClick={() => printQRCode(table)}
-                    className="flex items-center justify-center p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all"
+                    className="flex items-center justify-center p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-all"
                     title="Imprimir QR Code"
                     data-testid={`print-qr-${table.id}`}
                   >
@@ -344,7 +344,7 @@ const TableManagement = () => {
                   </button>
                   <button
                     onClick={() => handleDeleteTable(table.id)}
-                    className="flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all"
+                    className="flex items-center justify-center p-2 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg transition-all"
                     title="Remover Mesa"
                     data-testid={`delete-table-${table.id}`}
                   >
@@ -360,16 +360,16 @@ const TableManagement = () => {
       {/* Add Table Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md animate-scaleIn">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-[#18181B]">Adicionar Mesa</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md animate-scaleIn">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-[#18181B] dark:text-white">Adicionar Mesa</h2>
               <button
                 onClick={() => {
                   setShowAddModal(false);
                   setError('');
                   setNewTable({ table_number: '', capacity: 4 });
                 }}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -377,14 +377,14 @@ const TableManagement = () => {
 
             <form onSubmit={handleAddTable} className="p-6">
               {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg text-sm">
                   {error}
                 </div>
               )}
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#18181B] mb-2">
+                  <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                     Número da Mesa *
                   </label>
                   <input
@@ -392,14 +392,14 @@ const TableManagement = () => {
                     value={newTable.table_number}
                     onChange={(e) => setNewTable({ ...newTable, table_number: e.target.value })}
                     placeholder="Ex: 1, A1, VIP..."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500 focus:border-transparent"
                     data-testid="table-number-input"
                     autoFocus
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#18181B] mb-2">
+                  <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                     Capacidade (lugares)
                   </label>
                   <input
@@ -408,7 +408,7 @@ const TableManagement = () => {
                     max="20"
                     value={newTable.capacity}
                     onChange={(e) => setNewTable({ ...newTable, capacity: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2342] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500 focus:border-transparent"
                     data-testid="table-capacity-input"
                   />
                 </div>
@@ -422,14 +422,14 @@ const TableManagement = () => {
                     setError('');
                     setNewTable({ table_number: '', capacity: 4 });
                   }}
-                  className="flex-1 px-4 py-3 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all"
+                  className="flex-1 px-4 py-3 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#1a2342] hover:bg-[#0f1529] text-white rounded-lg font-medium transition-all disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#1a2342] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white rounded-lg font-medium transition-all disabled:opacity-50"
                   data-testid="save-table-button"
                 >
                   {saving ? (

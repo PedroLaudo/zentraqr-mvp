@@ -136,20 +136,20 @@ const RestaurantSettings = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1E2A4A]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1E2A4A] dark:border-blue-500"></div>
       </div>
     );
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-[#18181B] mb-8">Configurações do Restaurante</h1>
+      <h1 className="text-3xl font-bold text-[#18181B] dark:text-white mb-8">Configurações do Restaurante</h1>
 
       {message && (
         <div className={`mb-6 p-4 rounded-lg ${
           message.type === 'success' 
-            ? 'bg-green-50 border border-green-200 text-green-700' 
-            : 'bg-red-50 border border-red-200 text-red-700'
+            ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400' 
+            : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400'
         }`}>
           {message.text}
         </div>
@@ -158,8 +158,8 @@ const RestaurantSettings = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Preview */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sticky top-6">
-            <h2 className="font-bold text-lg mb-4">Pré-visualização</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 sticky top-6">
+            <h2 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">Pré-visualização</h2>
             
             <div 
               className="rounded-xl p-6 mb-4 text-white"
@@ -197,24 +197,24 @@ const RestaurantSettings = () => {
 
             <div className="space-y-3 text-sm">
               <div>
-                <p className="text-[#71717A] mb-1">Cor Primária</p>
+                <p className="text-[#71717A] dark:text-gray-400 mb-1">Cor Primária</p>
                 <div className="flex items-center gap-2">
                   <div 
-                    className="w-8 h-8 rounded border border-gray-300"
+                    className="w-8 h-8 rounded border border-gray-300 dark:border-gray-600"
                     style={{ backgroundColor: formData.primary_color }}
                   ></div>
-                  <span className="font-mono">{formData.primary_color}</span>
+                  <span className="font-mono text-gray-900 dark:text-gray-300">{formData.primary_color}</span>
                 </div>
               </div>
               
               <div>
-                <p className="text-[#71717A] mb-1">Cor Secundária</p>
+                <p className="text-[#71717A] dark:text-gray-400 mb-1">Cor Secundária</p>
                 <div className="flex items-center gap-2">
                   <div 
-                    className="w-8 h-8 rounded border border-gray-300"
+                    className="w-8 h-8 rounded border border-gray-300 dark:border-gray-600"
                     style={{ backgroundColor: formData.secondary_color }}
                   ></div>
-                  <span className="font-mono">{formData.secondary_color}</span>
+                  <span className="font-mono text-gray-900 dark:text-gray-300">{formData.secondary_color}</span>
                 </div>
               </div>
             </div>
@@ -223,12 +223,12 @@ const RestaurantSettings = () => {
 
         {/* Form */}
         <div className="lg:col-span-2">
-          <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h2 className="font-bold text-lg mb-6">Informações Básicas</h2>
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+            <h2 className="font-bold text-lg mb-6 text-gray-900 dark:text-white">Informações Básicas</h2>
             
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-[#18181B] mb-2">
+                <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                   Nome do Restaurante *
                 </label>
                 <input
@@ -236,19 +236,19 @@ const RestaurantSettings = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] dark:focus:ring-blue-500"
                   placeholder="Ex: Restaurante Demo"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#18181B] mb-2">
+                <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                   Descrição
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] dark:focus:ring-blue-500"
                   rows={3}
                   placeholder="Breve descrição do restaurante"
                 />
@@ -256,53 +256,53 @@ const RestaurantSettings = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#18181B] mb-2">
+                  <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                     Endereço
                   </label>
                   <input
                     type="text"
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] dark:focus:ring-blue-500"
                     placeholder="Rua, número"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#18181B] mb-2">
+                  <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                     Telefone
                   </label>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] dark:focus:ring-blue-500"
                     placeholder="+351 912 345 678"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-6 mb-6">
-              <h2 className="font-bold text-lg mb-4">Branding</h2>
+            <div className="border-t border-gray-200 dark:border-gray-600 pt-6 mb-6">
+              <h2 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">Branding</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#18181B] mb-2">
+                  <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                     Logo do Restaurante
                   </label>
                   
                   {/* Current Logo Preview */}
                   {formData.logo_url && (
-                    <div className="mb-3 flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-3 flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                       <img 
                         src={formData.logo_url} 
                         alt="Logo atual" 
-                        className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-white dark:border-gray-600 shadow-sm"
                       />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-[#18181B]">Logo atual</p>
-                        <p className="text-xs text-[#71717A]">Escolha um novo ficheiro para substituir</p>
+                        <p className="text-sm font-medium text-[#18181B] dark:text-white">Logo atual</p>
+                        <p className="text-xs text-[#71717A] dark:text-gray-400">Escolha um novo ficheiro para substituir</p>
                       </div>
                     </div>
                   )}
@@ -310,16 +310,16 @@ const RestaurantSettings = () => {
                   {/* File Upload */}
                   <div className="flex flex-col gap-3">
                     <label className="cursor-pointer">
-                      <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#1E2A4A] transition-all">
+                      <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-[#1E2A4A] dark:hover:border-blue-500 transition-all">
                         {uploading ? (
                           <>
-                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#1E2A4A]"></div>
-                            <span className="text-sm text-gray-600">A carregar...</span>
+                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#1E2A4A] dark:border-blue-500"></div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">A carregar...</span>
                           </>
                         ) : (
                           <>
-                            <Upload className="w-5 h-5 text-gray-500" />
-                            <span className="text-sm text-gray-600">Clique para escolher ficheiro</span>
+                            <Upload className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Clique para escolher ficheiro</span>
                           </>
                         )}
                       </div>
@@ -332,17 +332,17 @@ const RestaurantSettings = () => {
                       />
                     </label>
                     
-                    <p className="text-xs text-[#71717A]">
+                    <p className="text-xs text-[#71717A] dark:text-gray-400">
                       Formatos aceites: JPG, PNG, GIF, WebP. Máximo 5MB. Recomendado: 200x200px
                     </p>
                     
                     {/* Or URL input */}
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200"></div>
+                        <div className="w-full border-t border-gray-200 dark:border-gray-600"></div>
                       </div>
                       <div className="relative flex justify-center text-xs">
-                        <span className="bg-white px-2 text-gray-500">ou use um URL</span>
+                        <span className="bg-white dark:bg-gray-800 px-2 text-gray-500 dark:text-gray-400">ou use um URL</span>
                       </div>
                     </div>
                     
@@ -350,7 +350,7 @@ const RestaurantSettings = () => {
                       type="url"
                       value={formData.logo_url}
                       onChange={(e) => setFormData({...formData, logo_url: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A]"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] dark:focus:ring-blue-500"
                       placeholder="https://exemplo.com/logo.png"
                     />
                   </div>
@@ -358,7 +358,7 @@ const RestaurantSettings = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#18181B] mb-2">
+                    <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                       Cor Primária
                     </label>
                     <div className="flex gap-2">
@@ -366,23 +366,23 @@ const RestaurantSettings = () => {
                         type="color"
                         value={formData.primary_color}
                         onChange={(e) => setFormData({...formData, primary_color: e.target.value})}
-                        className="w-16 h-12 border border-gray-300 rounded-lg cursor-pointer flex-shrink-0"
+                        className="w-16 h-12 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer flex-shrink-0"
                       />
                       <input
                         type="text"
                         value={formData.primary_color}
                         onChange={(e) => setFormData({...formData, primary_color: e.target.value})}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] font-mono text-sm"
+                        className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] dark:focus:ring-blue-500 font-mono text-sm"
                         placeholder="#1E2A4A"
                       />
                     </div>
-                    <p className="text-xs text-[#71717A] mt-1">
+                    <p className="text-xs text-[#71717A] dark:text-gray-400 mt-1">
                       Usada em botões e destaques
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#18181B] mb-2">
+                    <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">
                       Cor Secundária
                     </label>
                     <div className="flex gap-2">
@@ -390,17 +390,17 @@ const RestaurantSettings = () => {
                         type="color"
                         value={formData.secondary_color}
                         onChange={(e) => setFormData({...formData, secondary_color: e.target.value})}
-                        className="w-16 h-12 border border-gray-300 rounded-lg cursor-pointer flex-shrink-0"
+                        className="w-16 h-12 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer flex-shrink-0"
                       />
                       <input
                         type="text"
                         value={formData.secondary_color}
                         onChange={(e) => setFormData({...formData, secondary_color: e.target.value})}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] font-mono text-sm"
+                        className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E2A4A] dark:focus:ring-blue-500 font-mono text-sm"
                         placeholder="#10B981"
                       />
                     </div>
-                    <p className="text-xs text-[#71717A] mt-1">
+                    <p className="text-xs text-[#71717A] dark:text-gray-400 mt-1">
                       Usada em elementos de sucesso
                     </p>
                   </div>
@@ -485,7 +485,7 @@ const RestaurantSettings = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-[#1E2A4A] hover:bg-[#0f1529] text-white px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 bg-[#1E2A4A] dark:bg-blue-700 hover:bg-[#0f1529] dark:hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
