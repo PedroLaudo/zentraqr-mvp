@@ -8,6 +8,9 @@ import {
   Check, AlertCircle
 } from 'lucide-react';
 import { RestaurantProvider, useRestaurant } from '../contexts/RestaurantContext';
+import ClassicTemplate from '../components/menu/templates/ClassicTemplate';
+import ModernTemplate from '../components/menu/templates/ModernTemplate';
+import CafeTemplate from '../components/menu/templates/CafeTemplate';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -78,6 +81,12 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
   const [tableNumber, setTableNumber] = useState('');
   const [callingWaiter, setCallingWaiter] = useState(false);
   const [waiterCalled, setWaiterCalled] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  
+  // New: Text menu support
+  const [menuType, setMenuType] = useState('image'); // 'image' | 'text'
+  const [textMenuData, setTextMenuData] = useState(null);
+  const [textMenuTemplate, setTextMenuTemplate] = useState('classic');
 
   // Use primary color or fallback
   const brandPrimary = primaryColor || '#1E2A4A';
@@ -103,19 +112,46 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
 
   const loadData = async () => {
     try {
-      const [catRes, prodRes] = await Promise.all([
-        axios.get(`${API}/categories/restaurant/${restaurantId}`),
-        axios.get(`${API}/products/restaurant/${restaurantId}`)
-      ]);
+      // Load menu config to determine active menu type
+      const menuConfigRes = await axios.get(`${API}/restaurants/${restaurantId}/menu-config`);
+      const menuConfig = menuConfigRes.data;
+      
+      setMenuType(menuConfig.active_menu_type || 'image');
+      
+      if (menuConfig.active_menu_type === 'text' && menuConfig.text_menu_data) {
+        // Load text menu
+        setTextMenuData(menuConfig.text_menu_data);
+        setTextMenuTemplate(menuConfig.text_menu_template || 'classic');
+      } else {
+        // Load image menu (current behavior)
+        const [catRes, prodRes] = await Promise.all([
+          axios.get(`${API}/categories/restaurant/${restaurantId}`),
+          axios.get(`${API}/products/restaurant/${restaurantId}`)
+        ]);
 
-      setCategories(catRes.data);
-      setProducts(prodRes.data);
+        setCategories(catRes.data);
+        setProducts(prodRes.data);
 
-      if (catRes.data.length > 0) {
-        setSelectedCategory(catRes.data[0].id);
+        if (catRes.data.length > 0) {
+          setSelectedCategory(catRes.data[0].id);
+        }
       }
     } catch (error) {
       console.error('Error loading data:', error);
+      // Fallback to image menu on error
+      try {
+        const [catRes, prodRes] = await Promise.all([
+          axios.get(`${API}/categories/restaurant/${restaurantId}`),
+          axios.get(`${API}/products/restaurant/${restaurantId}`)
+        ]);
+        setCategories(catRes.data);
+        setProducts(prodRes.data);
+        if (catRes.data.length > 0) {
+          setSelectedCategory(catRes.data[0].id);
+        }
+      } catch (fallbackError) {
+        console.error('Error loading menu:', fallbackError);
+      }
     } finally {
       setLoading(false);
     }
@@ -160,6 +196,34 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
       if (existingIndex >= 0) {
         const updated = [...prev];
         updated[existingIndex].quantity += quantity;
+        return updated;
+      }
+
+      return [...prev, cartItem];
+    });
+  };
+
+  // Add text menu item to cart - maps to same structure
+  const addTextMenuItemToCart = (textItem) => {
+    const cartItem = {
+      product_id: textItem.id,
+      product_name: textItem.name,
+      quantity: 1,
+      price: textItem.price,
+      extras: [],
+      image_url: null, // text menu items don't have images
+      notes: '',
+      source: 'text_menu' // optional flag to track source
+    };
+
+    setCart(prev => {
+      const existingIndex = prev.findIndex(
+        item => item.product_id === textItem.id
+      );
+
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex].quantity += 1;
         return updated;
       }
 
@@ -219,6 +283,44 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
     );
   }
 
+  // Render text menu if active
+  if (menuType === 'text' && textMenuData) {
+    const TemplateComponent = 
+      textMenuTemplate === 'modern' ? ModernTemplate :
+      textMenuTemplate === 'cafe' ? CafeTemplate :
+      ClassicTemplate;
+
+    return (
+      <div className="relative min-h-screen">
+        {/* Text Menu Template */}
+        <TemplateComponent
+          menuData={textMenuData}
+          onAddToCart={addTextMenuItemToCart}
+          brandPrimary={brandPrimary}
+          brandSecondary={brandSecondary}
+        />
+
+        {/* Floating Cart Button */}
+        {cart.length > 0 && (
+          <motion.button
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            onClick={goToCart}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-6 py-4 rounded-full shadow-2xl text-white font-bold"
+            style={{ 
+              background: `linear-gradient(135deg, ${brandPrimary} 0%, ${hexToRgba(brandPrimary, 0.8)} 100%)` 
+            }}
+          >
+            <ShoppingCart className="w-6 h-6" />
+            <span className="text-lg">{cart.length}</span>
+            <span className="hidden sm:inline">Ver Carrinho</span>
+          </motion.button>
+        )}
+      </div>
+    );
+  }
+
+  // Render image menu (current behavior)
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-32">
       {/* REDESIGNED HEADER - CENTERED LAYOUT */}
