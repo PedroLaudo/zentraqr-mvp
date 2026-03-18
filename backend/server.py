@@ -981,13 +981,12 @@ async def get_menu_config(restaurant_id: str):
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurante não encontrado")
     
-    # Return menu_config or default values (no text_menu_data)
-    menu_config = restaurant.get('menu_config', {
-        'active_menu_type': 'image',
-        'text_menu_template': 'classic'
-    })
-    
-    return menu_config
+    # Return only presentation fields (strip any legacy text_menu_data from DB)
+    menu_config = restaurant.get('menu_config', {})
+    return {
+        'active_menu_type': menu_config.get('active_menu_type', 'image'),
+        'text_menu_template': menu_config.get('text_menu_template', 'classic')
+    }
 
 @api_router.put("/restaurants/{restaurant_id}/menu-config")
 async def update_menu_config(
@@ -1003,11 +1002,12 @@ async def update_menu_config(
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurante não encontrado")
     
-    # Get current menu_config or create default (no text_menu_data)
-    current_config = restaurant.get('menu_config', {
-        'active_menu_type': 'image',
-        'text_menu_template': 'classic'
-    })
+    # Get current config, stripping any legacy fields
+    raw_config = restaurant.get('menu_config', {})
+    current_config = {
+        'active_menu_type': raw_config.get('active_menu_type', 'image'),
+        'text_menu_template': raw_config.get('text_menu_template', 'classic')
+    }
     
     # Update only provided fields
     update_data = menu_config.model_dump(exclude_none=True)
