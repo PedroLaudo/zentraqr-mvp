@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon, Upload, Camera } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon, Upload, Camera, Star, Eye, Utensils } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import TextMenuRenderer from '../components/menu/TextMenuRenderer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -152,6 +153,7 @@ const MenuManagement = () => {
   const [menuType, setMenuType] = useState('image'); // 'image' | 'text'
   const [textMenuTemplate, setTextMenuTemplate] = useState('classic');
   const [loadingMenuConfig, setLoadingMenuConfig] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -317,6 +319,38 @@ const MenuManagement = () => {
         )}
       </div>
 
+      {/* Preview Toggle */}
+      {menuType === 'text' && (
+        <div className="mb-6">
+          <button
+            data-testid="toggle-preview-button"
+            onClick={() => setShowPreview(!showPreview)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+          >
+            <Eye className="w-5 h-5" />
+            {showPreview ? 'Ocultar Preview' : 'Ver Preview do Menu'}
+          </button>
+          
+          {showPreview && (
+            <div className="mt-4 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-lg">
+              <div className="bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                Preview — Template: <span className="capitalize font-bold">{textMenuTemplate}</span>
+              </div>
+              <div className="max-h-[600px] overflow-y-auto">
+                <TextMenuRenderer
+                  categories={categories}
+                  products={products}
+                  template={textMenuTemplate}
+                  onAddToCart={() => {}}
+                  previewMode={true}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Single Product/Category Management (works for both modes) */}
           <div className="flex items-center justify-end gap-3 mb-6">
             <button
@@ -394,8 +428,6 @@ const MenuManagement = () => {
               <p className="text-center text-[#71717A] dark:text-gray-400 py-12">Nenhum produto nesta categoria</p>
             )}
           </div>
-        </>
-      )}
 
       {/* Modals */}
       {showCategoryModal && (
@@ -465,13 +497,22 @@ const ProductCard = ({ product, categories, onEdit, onDelete }) => {
   const category = categories.find(c => c.id === product.category_id);
   
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-700/50 hover:shadow-md transition-all">
-      {product.image_url && (
+    <div data-testid={`product-card-${product.id}`} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-700/50 hover:shadow-md transition-all">
+      {product.image_url ? (
         <img src={product.image_url} alt={product.name} className="w-full h-32 object-cover" />
+      ) : (
+        <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center">
+          <Utensils className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+        </div>
       )}
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-bold text-[#18181B] dark:text-white">{product.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-bold text-[#18181B] dark:text-white">{product.name}</h3>
+            {product.highlighted && (
+              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+            )}
+          </div>
           <span className="text-lg font-bold text-[#1a2342] dark:text-blue-400">€{product.price.toFixed(2)}</span>
         </div>
         <p className="text-xs text-[#71717A] dark:text-gray-400 mb-2">{category?.name}</p>
@@ -623,7 +664,9 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
     price: product?.price || 0,
     image_url: product?.image_url || '',
     category_id: product?.category_id || categories[0]?.id || '',
-    extras: product?.extras || []
+    extras: product?.extras || [],
+    highlighted: product?.highlighted || false,
+    display_order: product?.display_order || 0
   });
   const [newExtra, setNewExtra] = useState({ name: '', price: 0 });
   const [saving, setSaving] = useState(false);
@@ -739,6 +782,35 @@ const ProductModal = ({ product, categories, onClose, onSave, restaurantId }) =>
             currentImage={formData.image_url}
             onImageChange={(url) => setFormData({...formData, image_url: url})}
           />
+
+          {/* Highlighted + Display Order */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+              <input
+                type="checkbox"
+                id="highlighted"
+                data-testid="product-highlighted-checkbox"
+                checked={formData.highlighted}
+                onChange={(e) => setFormData({...formData, highlighted: e.target.checked})}
+                className="w-5 h-5 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500"
+              />
+              <label htmlFor="highlighted" className="flex items-center gap-2 text-sm font-medium text-[#18181B] dark:text-white cursor-pointer">
+                <Star className="w-4 h-4 text-yellow-500" />
+                Destaque
+              </label>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#18181B] dark:text-white mb-2">Ordem</label>
+              <input
+                type="number"
+                data-testid="product-display-order-input"
+                value={formData.display_order}
+                onChange={(e) => setFormData({...formData, display_order: parseInt(e.target.value) || 0})}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1a2342] dark:focus:ring-blue-500"
+                min="0"
+              />
+            </div>
+          </div>
 
           {/* Extras */}
           <div className="border-t border-gray-200 dark:border-gray-600 pt-4">

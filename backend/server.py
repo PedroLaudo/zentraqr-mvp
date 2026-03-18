@@ -390,32 +390,6 @@ class ProductCreate(BaseModel):
     highlighted: bool = False
     display_order: int = 0
 
-# ============= TEXT MENU MODELS =============
-
-class TextMenuItem(BaseModel):
-    """Individual item in a text menu section"""
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str
-    description: Optional[str] = None
-    price: float
-    highlighted: bool = False  # chef recommendation / popular
-    display_order: int = 0
-
-class TextMenuSection(BaseModel):
-    """Section/Category in a text menu (e.g., Entradas, Pratos Principais)"""
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    title: str
-    display_order: int = 0
-    items: List[TextMenuItem] = []
-
-class TextMenuData(BaseModel):
-    """Complete text menu data structure"""
-    title: str  # e.g., "Carta do Restaurante"
-    subtitle: Optional[str] = None  # e.g., "Cozinha Portuguesa Tradicional"
-    sections: List[TextMenuSection] = []
-
 class MenuConfig(BaseModel):
     """Restaurant menu configuration - controls presentation only"""
     model_config = ConfigDict(extra="ignore")

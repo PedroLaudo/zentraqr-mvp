@@ -179,32 +179,9 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
     });
   };
 
-  // Add text menu item to cart - maps to same structure
-  const addTextMenuItemToCart = (textItem) => {
-    const cartItem = {
-      product_id: textItem.id,
-      product_name: textItem.name,
-      quantity: 1,
-      price: textItem.price,
-      extras: [],
-      image_url: null, // text menu items don't have images
-      notes: '',
-      source: 'text_menu' // optional flag to track source
-    };
-
-    setCart(prev => {
-      const existingIndex = prev.findIndex(
-        item => item.product_id === textItem.id
-      );
-
-      if (existingIndex >= 0) {
-        const updated = [...prev];
-        updated[existingIndex].quantity += 1;
-        return updated;
-      }
-
-      return [...prev, cartItem];
-    });
+  // Add item from text menu to cart (same product structure, no extras by default)
+  const addTextMenuItemToCart = (product) => {
+    addToCart(product, [], 1);
   };
 
   const updateCartQuantity = (index, delta) => {
